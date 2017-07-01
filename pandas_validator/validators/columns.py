@@ -8,6 +8,9 @@ from .series import (
 
 
 class ColumnValidatorMixin(BaseSeriesValidator):
+
+    TYPE_ERROR_MESSAGE = 'Column "{_name}" has the different type variables.'
+
     def __init__(self, label, *args, **kwargs):
         super(ColumnValidatorMixin, self).__init__(*args, **kwargs)
         self.label = label

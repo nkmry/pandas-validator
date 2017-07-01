@@ -4,6 +4,9 @@ from ..core.exceptions import ValidationError
 
 
 class BaseSeriesValidator(object):
+
+    TYPE_ERROR_MESSAGE = 'Series has the different type variables.'
+
     def __init__(self, series_type=None):
         self.series_type = series_type
 
@@ -13,7 +16,8 @@ class BaseSeriesValidator(object):
     def _check_type(self, series):
         if (self.series_type is not None and
                 not series.dtype.type == self.series_type):
-            raise ValidationError('Series has the different type variables.')
+            raise ValidationError(
+                self.TYPE_ERROR_MESSAGE.format(**series.__dict__))
 
     def is_valid(self, series):
         try:
@@ -56,7 +60,8 @@ class CharSeriesValidator(BaseSeriesValidator):
 
     def _check_type(self, series):
         if len(series[series.map(lambda x: not isinstance(x, str))]) > 0:
-            raise ValidationError('Series has the different type variables.')
+            raise ValidationError(
+                self.TYPE_ERROR_MESSAGE.format(**series.__dict__))
 
     def validate(self, series):
         super(CharSeriesValidator, self).validate(series)

@@ -1,8 +1,10 @@
 from unittest import TestCase
+from nose.tools import raises
 import pandas as pd
 import numpy as np
 
 import pandas_validator as pv
+from pandas_validator.core.exceptions import ValidationError
 
 
 class DataFrameValidatorFixture(pv.DataFrameValidator):
@@ -23,6 +25,16 @@ class DataFrameValidatorTest(TestCase):
     def test_invalid_when_given_integer_series_to_float_column_validator(self):
         df = pd.DataFrame({'i': [0, 1], 'f': [0, 1]})
         self.assertFalse(self.validator.is_valid(df))
+
+    @raises(ValidationError)
+    def test_invalid_with_raising_error(self):
+        df = pd.DataFrame({'i': [0, 1], 'f': [0, 1]})
+        try:
+            self.validator.is_valid(df, raise_exception=True)
+        except ValidationError as e:
+            self.assertEqual(
+                e.message, 'Column "f" has the different type variables.')
+            raise
 
 
 class DataFrameValidatorFixtureWithSize(pv.DataFrameValidator):
