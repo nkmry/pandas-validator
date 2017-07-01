@@ -1,5 +1,4 @@
 from unittest import TestCase
-from nose.tools import raises
 import pandas as pd
 import numpy as np
 
@@ -26,15 +25,16 @@ class DataFrameValidatorTest(TestCase):
         df = pd.DataFrame({'i': [0, 1], 'f': [0, 1]})
         self.assertFalse(self.validator.is_valid(df))
 
-    @raises(ValidationError)
     def test_invalid_with_raising_error(self):
-        df = pd.DataFrame({'i': [0, 1], 'f': [0, 1]})
-        try:
-            self.validator.is_valid(df, raise_exception=True)
-        except ValidationError as e:
-            self.assertEqual(
-                e.message, 'Column "f" has the different type variables.')
-            raise
+        def temp_func():
+            df = pd.DataFrame({'i': [0, 1], 'f': [0, 1]})
+            try:
+                self.validator.is_valid(df, raise_exception=True)
+            except ValidationError as e:
+                self.assertEqual(
+                    e.message, 'Column "f" has the different type variables.')
+                raise
+        self.assertRaises(ValidationError, temp_func)
 
 
 class DataFrameValidatorFixtureWithSize(pv.DataFrameValidator):
